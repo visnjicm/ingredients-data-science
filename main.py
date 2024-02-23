@@ -1,6 +1,6 @@
 import pickle
 import json
-
+import matplotlib.pyplot as plt
 import pandas
 import pandas as pd
 
@@ -67,19 +67,89 @@ my_recipe_name = get_recipe_name(424415)
 
 var = get_recipes_by_tag('main-dish')
 
+var7 = get_recipes_by_tag('breakfast')
+
 var3 = check_tag(424415, 'main-dish')
 
+score = 0
+iterations = 0
+skipped = 0
+lst_ingredients_ranks = []  # list of lists, the index of each element represents the iteration number
+lst_iterations = list(range(701))
+x_values = []
+y_values = []
+
+print(ingredients_sorted[0:200])
+
+# testing hypothesis that score/iterations will pretty much equal to 1, or very, very close to 1
+
 for id in recipes_ids:
-    if check_tag(id, 'main-dish') and check_tag(id, 'healthy'):
+    if check_tag(id, 'dessert'):
         my_ingredients = get_ingredients_names(get_ingredients_ids(id))
         my_recipe_name = get_recipe_name(id)
         my_ingredients_ids = get_ingredients_ids(id)
         my_ingredients_ranks = []
 
         for ingredient in my_ingredients:
-            var5 = ingredients[ingredients['processed'] == ingredient].replaced.values[0]
+            try:
+                var5 = ingredients[ingredients['processed'] == ingredient].replaced.values[0]
+            except:
+                skipped += 1
+                continue
             my_ingredients_ranks.append(ingredients_sorted.index(var5))
             pass
+
+        less_than_200 = 0  # less than or equal to rank 100
+        more_than_200 = 0  # greater than rank 100
+        for number in my_ingredients_ranks:
+            if number <= 200:
+                less_than_200 += 1
+            else:
+                more_than_200 += 1
+
+        if less_than_200 > more_than_200:
+            score += 1
+
+        lst_ingredients_ranks.append(my_ingredients_ranks)
+
+        x_values = x_values + lst_ingredients_ranks[iterations]
+        y_values = y_values + ([iterations] * len(lst_ingredients_ranks[iterations]))
+
+        iterations += 1
+        print()
+        print(f"score: {score}, iterations: {iterations}, skipped: {skipped}")
+        print(my_ingredients)
+        print(my_ingredients_ranks)
+        print()
+
+        # if iterations == 1000:
+        #     break
+
         pass
 
+
+plt.figure(figsize=(8, 6))
+plt.scatter(x_values, y_values, color='blue', alpha=0.5, s=1)
+plt.title('Recipe # vs. Rank Ingredient Scatter Plot')
+plt.xlabel('Rank Ingredient')
+plt.ylabel('Recipe #')
+plt.grid(True)
+plt.show()
+
 pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
