@@ -25,7 +25,7 @@ class CookingSystem:
 
         self.tags = self._tags()
 
-        print(self.tags)
+        # print(self.tags)
 
         pass
 
@@ -43,10 +43,19 @@ class CookingSystem:
         tags specified by the user as an input parameter. If the input parameter is an empty tuple, then the
         function just returns the original recipes dataframe.
         """
-        if tags is None:
+        if tags is None or []:
             return self.recipes
         else:
-            return self.recipes[self.recipes['tags'].apply(lambda x: all(tag in x for tag in tags))]
+            drop_lst = []
+            for index, row in self.recipes.iterrows():
+                if all(tag in ast.literal_eval(row.tags) for tag in tags):
+                    # keep row
+                    continue
+                else:
+                    # discard row
+                    drop_lst.append(index)
+
+            return self.recipes.drop(drop_lst)
 
     def recipe_ingredients_ids(self, recipe_id: int) -> list:
         """
@@ -91,7 +100,7 @@ class CookingSystem:
     def num_of_ingredients(self, recipe_id: int):
         return self.recipes[self.recipes['id'] == recipe_id].n_ingredients.values.max()
 
-    def plot_recipes_vs_ingredients_ranks(self, tags: tuple = (), stop: int = -1):
+    def plot_recipes_vs_ingredients_ranks(self, tags: list, stop: int = -1):
         """
         Generate a recipes vs ingredients ranks plot for all the recipes (in the CookingSystem database) which contain
         at least the tags specified in the tags tuple input parameter to this function. The user of this function can
@@ -107,7 +116,7 @@ class CookingSystem:
 
         shopping_cart = set()
 
-        my_var = self.recipes_by_tags(tags)
+        # my_var = self.recipes_by_tags(tags)
 
         lst_recipes = self.recipes_by_tags(tags=tags)['id'].values.tolist()
 
@@ -119,7 +128,7 @@ class CookingSystem:
             if len(recipe_ingredients_ids) == 0:
                 continue
 
-            if self.num_of_ingredients(id) > 8:
+            if self.num_of_ingredients(id) > 100:
                 continue
 
             else:
@@ -129,7 +138,7 @@ class CookingSystem:
                 for ingredient in recipe_ingredients_names:
                     my_ingredients_ranks.append(self.ingredients_sorted.index(ingredient))
 
-                if any(num > 1000 for num in my_ingredients_ranks):
+                if any(num > 100000 for num in my_ingredients_ranks):
                     continue
 
                 if all(num in my_ingredients_ranks for num in []):
@@ -179,4 +188,4 @@ class CookingSystem:
 if __name__ == "__main__":
     my_cooking = CookingSystem()
     my_cooking.df_to_csv(my_cooking.ingredients)
-    my_cooking.plot_recipes_vs_ingredients_ranks(('quail'), stop=10)
+    my_cooking.plot_recipes_vs_ingredients_ranks(['quail'], stop=10)
