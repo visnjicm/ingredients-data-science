@@ -10,4 +10,4 @@ https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactio
 
 ![Screenshot from 2024-03-04 15-24-57](https://github.com/visnjicm/ingredients-data-science/assets/126916558/946f6f8d-3aba-4dbc-b05b-26e00c7a5bd1)
 
-![Screenshot from 2024-03-04 15-46-25](https://github.com/visnjicm/ingredients-data-science/assets/126916558/83ab3407-726a-439e-bb7d-e994eeea3265)
+
