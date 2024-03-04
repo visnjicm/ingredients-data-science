@@ -20,6 +20,18 @@ General plot (zoomed in):
 There is no repeating pattern, the data is inherently scattered as you can see. (If you don't believe me, zoom in on any part of the plot and you will see.)
 
 
+This other view of the same plot seems to reveal that most of the ingredients in these recipes have a rank less than 2000. An ingredient with a rank above that does happen in some recipes, but it is rare (less common). Even rarer is for a ingredient with rank 4000 or greater to be in the recipe.
+
+<ins>Ingredient Rank Rarity</ins><br> 
+Common: 0-500 <br>
+Rare: 500-1000<br>
+More Rare: 1000-2000<br>
+Super Rare: 2000-4000<br>
+Ultra Mega Rare: 4000+<br>
+
+
+
+![Screenshot from 2024-03-04 16-23-19](https://github.com/visnjicm/ingredients-data-science/assets/126916558/079c4ddf-5483-47ee-82da-e6399e304648)
 
 
 
