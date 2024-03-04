@@ -8,6 +8,6 @@ When I was in college, I wanted to cook for myself as much as possible since I d
 
 https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions
 
-![Screenshot from 2024-03-04 15-24-57](https://github.com/visnjicm/ingredients-data-science/assets/126916558/946f6f8d-3aba-4dbc-b05b-26e00c7a5bd1)
+
 
 
