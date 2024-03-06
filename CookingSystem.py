@@ -33,21 +33,40 @@ class CookingSystem:
             tags_set.update(tags)
         return tags_set
 
-    def recipes_by_tags(self, tags: list) -> pd.DataFrame:
-        if tags is None or []:
-            return self.recipes
+    def recipes_by_tags(self, df: pd.DataFrame, tags: list) -> pd.DataFrame:
+        if len(tags) == 0:
+            return df
         else:
             drop_lst = []
-            for index, row in self.recipes.iterrows():
+            for index, row in df.iterrows():
                 # should I change this to any, or keep it all?
-                if all(tag in ast.literal_eval(row.tags) for tag in tags):
+                var = row['name']
+                if any(tag in ast.literal_eval(row.tags) for tag in tags):
                     # keep row
                     continue
                 else:
                     # discard row
                     drop_lst.append(index)
 
-            return self.recipes.drop(drop_lst)
+            return df.drop(drop_lst)
+
+    def recipes_by_words(self, df: pd.DataFrame, words: list) -> pd.DataFrame:
+        if words is None or []:
+            return df
+        else:
+            drop_lst = []
+            for index, row in df.iterrows():
+                # should I change this to any, or keep it all?
+                var = str(row['name'])
+                print(var)
+                if all(word in var for word in words):
+                    # keep row
+                    continue
+                else:
+                    # discard row
+                    drop_lst.append(index)
+
+            return df.drop(drop_lst)
 
     def recipe_ingredients_ids(self, recipe_id: int) -> list:
 
@@ -94,11 +113,12 @@ class CookingSystem:
 
     def plot_recipes_vs_ingredients_ranks(self, max_num_of_ingredients: int = 9999999,
                                           rank_upper_bound: int = 9999999,
-                                          include_tags: list = [],
-                                          omit_tags: list = [],
+                                          search_tags: list = [],
+                                          skip_tags: list = [],
                                           can_include: list = [],
+                                          search_words=[],
                                           must_include: list = [],
-                                          omit_strings: list = [],
+                                          skip_words: list = [],
                                           max_len_shopping_cart=9999999,
                                           stop: int = -1) -> None:
         """
@@ -108,7 +128,7 @@ class CookingSystem:
         Plot will continue until all recipes have been graphed, if no stop condition is input.
         :param max_num_of_ingredients: Max num of ingredients that any recipe can have.
         :param rank_upper_bound: Upper bound on ingredient rank.
-        :param include_tags: Recipes returned will contain at least these all_tags.
+        :param search_tags: Recipes returned will contain at least these all_tags.
         :param can_include: Recipes returned will contain at least the ingredients, with ranks specified here.
         :param stop: Function will return/stop after this many recipes have been "found".
         :return: None
@@ -125,7 +145,13 @@ class CookingSystem:
 
         # my_var = self.recipes_by_tags(all_tags)
 
-        lst_recipes = self.recipes_by_tags(tags=include_tags)['id'].values.tolist()
+        new_df = self.recipes_by_tags(df=self.recipes, tags=search_tags)
+        # ['id'].values.tolist()
+
+        lst_recipes = self.recipes_by_words(df=new_df, words=search_words)['id'].values.tolist()
+        pass
+
+        # lst_recipes = self.recipes_by_tags(self.recipes, search_tags)
 
         lst_recipes = random.sample(lst_recipes, len(lst_recipes))
 
@@ -139,10 +165,10 @@ class CookingSystem:
             if self.num_of_ingredients(id) > max_num_of_ingredients:
                 continue
 
-            if any(string in self.recipe_name(id) for string in omit_strings):
+            if any(string in self.recipe_name(id) for string in skip_words):
                 continue
 
-            if any(tag in self.recipe_tags(id) for tag in omit_tags):
+            if any(tag in self.recipe_tags(id) for tag in skip_tags):
                 continue
 
             else:
@@ -168,7 +194,7 @@ class CookingSystem:
                 iterations += 1
                 shopping_cart.update(recipe_ingredients_names)
 
-                print()
+                print(f"Recipe ID: {id}")
                 print(f"Recipe Name: {self.recipe_name(id)}")
                 print(f"Recipe Tags: {self.recipe_tags(id)}")
                 print(f"Recipe Ingredients: {self.ingredients_names(self.recipe_ingredients_ids(id))}")
@@ -181,7 +207,7 @@ class CookingSystem:
                     break
 
         print(f"num of recipes: {iterations}")
-        print(shopping_cart)
+        print(f"Shopping Cart: {shopping_cart}")
         print(len(shopping_cart))
         return None
 
@@ -204,7 +230,9 @@ if __name__ == "__main__":
     my_cooking = CookingSystem()
     # my_cooking.df_to_csv(my_cooking.ingredients)
     # print([my_cooking.ingredients_sorted[value] for value in [0, 3, 5, 6, 7, 34]])
-    my_cooking.plot_recipes_vs_ingredients_ranks(include_tags=['breakfast'],
-                                                 omit_strings=['sauce', 'syrup'],
-                                                 max_len_shopping_cart=50,
-                                                 omit_tags=['kid-friendly'])
+    my_cooking.plot_recipes_vs_ingredients_ranks(search_tags=[],
+                                                 skip_tags=['kid-friendly'],
+                                                 search_words=['steak'],
+                                                 skip_words=['sauce', 'syrup'],
+                                                 max_num_of_ingredients=10,
+                                                 max_len_shopping_cart=20)
