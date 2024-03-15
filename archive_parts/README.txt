@@ -1,0 +1,1 @@
+run cat archive* > archive.zip then extract archive.zip
